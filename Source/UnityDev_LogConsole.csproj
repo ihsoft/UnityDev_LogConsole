@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{55AD3765-51B3-4294-86F7-B6909C764BA3}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>UnityDev.LogConsole</RootNamespace>
+        <AssemblyName>UnityDev_LogConsole</AssemblyName>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <DocumentationFile>bin\Release\UnityDev_LogConsole.xml</DocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="Unity.InputSystem, Version=1.5.1.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Unity\Unity.InputSystem.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Unity\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Unity\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Unity\UnityEngine.IMGUIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Unity\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Unity\UnityEngine.TextRenderingModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="BaseLogAggregator.cs" />
+        <Compile Include="CollapseLogAggregator.cs" />
+        <Compile Include="ConsoleUI.cs" />
+        <Compile Include="LogFilter.cs" />
+        <Compile Include="LogInterceptor.cs" />
+        <Compile Include="LogRecord.cs" />
+        <Compile Include="PluginLoader.cs" />
+        <Compile Include="PersistentLogAggregator.cs" />
+        <Compile Include="PlainLogAggregator.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="SmartLogAggregator.cs" />
+        <Compile Include="SnapshotLogAggreator.cs" />
+        <Compile Include="Utils\Configs\ConfigNode.cs" />
+        <Compile Include="Utils\Configs\PersistentNode.cs" />
+        <Compile Include="Utils\Configs\SimpleTextSerializer.cs" />
+        <Compile Include="Utils\Extensions\RectExtensions.cs" />
+        <Compile Include="Utils\FSUtils\ModPaths.cs" />
+        <Compile Include="Utils\GUIUtils\GuiActionsList.cs" />
+        <Compile Include="Utils\GUIUtils\GuiColorScope.cs" />
+        <Compile Include="Utils\GUIUtils\GuiEnabledStateScope.cs" />
+        <Compile Include="Utils\GUIUtils\GuiWindow.cs" />
+        <Compile Include="Utils\LogUtils\DbgFormatter.cs" />
+        <Compile Include="Utils\LogUtils\DebugEx.cs" />
+        <Compile Include="Utils\LogUtils\HostedDebugLog.cs" />
+        <Compile Include="Utils\LogUtils\LoggingSettings.cs" />
+        <Compile Include="Utils\ModelUtils\Hierarchy.cs" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    -->
+    <Target Name="AfterBuild">
+	<Exec Command="xcopy /i /Y $(TargetPath) u:\BepInEx\plugins\UnityDev_LogConsole" />
+    </Target>
+
+</Project>
