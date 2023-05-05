@@ -88,8 +88,5 @@
     <Target Name="BeforeBuild">
     </Target>
     -->
-    <Target Name="AfterBuild">
-	<Exec Command="xcopy /i /Y $(TargetPath) u:\BepInEx\plugins\UnityDev_LogConsole" />
-    </Target>
 
 </Project>
