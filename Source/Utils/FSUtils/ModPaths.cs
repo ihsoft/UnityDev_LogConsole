@@ -10,10 +10,12 @@ namespace UnityDev.Utils.FSUtils {
 /// <summary>A helper class to deal with plugins file structure.</summary>
 public static class ModPaths {
   /// <summary>Returns full path to the game's root folder.</summary>
-  public static string ApplicationRootPath => throw new NotImplementedException("Implement for the target game");
+  public static string ApplicationRootPath => _applicationRootPath ??= BepInEx.Paths.GameRootPath;
+  static string _applicationRootPath;
 
   /// <summary>Returns full path to the plugins root folder.</summary>
-  public static string PluginsRootPath => throw new NotImplementedException("Implement for the target game");
+  public static string PluginsRootPath => _pluginsRootPath ??= BepInEx.Paths.PluginPath;
+  static string _pluginsRootPath;
 
   /// <summary>Makes full absolute path from the provided relative path in the type's DLL location folder.</summary>
   /// <remarks>

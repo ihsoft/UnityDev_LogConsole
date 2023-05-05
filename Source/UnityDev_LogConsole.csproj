@@ -34,7 +34,22 @@
         <DocumentationFile>bin\Release\UnityDev_LogConsole.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="BepInEx, Version=5.4.21.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Timberborn\BepInEx.dll</HintPath>
+        </Reference>
+        <Reference Include="Bindito.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Timberborn\Bindito.Core.dll</HintPath>
+        </Reference>
         <Reference Include="System" />
+        <Reference Include="TimberApi, Version=0.5.4.2, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Timberborn\TimberApi.dll</HintPath>
+        </Reference>
+        <Reference Include="TimberApi.Common, Version=0.5.4.2, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Timberborn\TimberApi.Common.dll</HintPath>
+        </Reference>
+        <Reference Include="TimberApi.Core, Version=0.5.4.2, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Timberborn\TimberApi.Core.dll</HintPath>
+        </Reference>
         <Reference Include="Unity.InputSystem, Version=1.5.1.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Unity\Unity.InputSystem.dll</HintPath>
         </Reference>
@@ -67,6 +82,8 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="SmartLogAggregator.cs" />
         <Compile Include="SnapshotLogAggreator.cs" />
+        <Compile Include="Timberborn\BepInExLoader.cs" />
+        <Compile Include="Timberborn\TimberApiLoader.cs" />
         <Compile Include="Utils\Configs\ConfigNode.cs" />
         <Compile Include="Utils\Configs\PersistentNode.cs" />
         <Compile Include="Utils\Configs\SimpleTextSerializer.cs" />
@@ -88,5 +105,8 @@
     <Target Name="BeforeBuild">
     </Target>
     -->
+    <Target Name="AfterBuild">
+        <Exec Command="xcopy /i /Y $(TargetPath) u:\BepInEx\plugins\UnityDev_LogConsole" />
+    </Target>
 
 </Project>
