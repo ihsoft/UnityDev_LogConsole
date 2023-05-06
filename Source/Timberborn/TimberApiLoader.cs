@@ -21,7 +21,7 @@ namespace UnityDev.LogConsole {
 sealed class TimberApiLoader : IConfigurator {
   public void Configure(IContainerDefinition containerDefinition) {
     DebugEx.Info("Re-trying LogConsole loading from TimberAPI...");
-    PluginLoader.Start(new GameObject("unity_extended_log_console"));
+    PluginLoader.Start();
   }
 }
 

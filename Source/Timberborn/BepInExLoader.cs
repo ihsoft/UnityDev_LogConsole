@@ -15,7 +15,7 @@ namespace UnityDev.LogConsole {
 sealed class BepInExLoader : BaseUnityPlugin {
   void Awake() {
     Logger.LogInfo($"Attaching logger from BepInEx manager...");
-    PluginLoader.Start(gameObject);
+    PluginLoader.Start();
   }
 }
 
