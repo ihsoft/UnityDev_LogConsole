@@ -2,9 +2,9 @@
 // Author: igor.zavoychinskiy@gmail.com
 // This software is distributed under Public Domain license.
 
-using UnityDev.LogUtils;
 using UnityDev.Utils.FSUtils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UnityDev.LogConsole {
 
@@ -28,15 +28,13 @@ static class PluginLoader {
   internal static readonly SmartLogAggregator SmartLogAggregator = new();
   #endregion
 
-  public static void Start(GameObject rootObject) {
-    if (_isLoadedAndAttached && _currentGameObject != null && _currentGameObject != rootObject) {
-      DebugEx.Info("Skipping re-attach. Attached to: {0}", _currentGameObject);
+  public static void Start() {
+    if (_isLoadedAndAttached && _currentGameObject != null) {
       return;  // No need to re-attach.
     }
 
     // Start all aggregators and begin intercepting if not yet done.
     if (!_isLoadedAndAttached) {
-      DebugEx.Info("First time attaching LogConsole to: {0}", rootObject);
       _isLoadedAndAttached = true;
 
       LogInterceptor.LoadSettings();
@@ -52,18 +50,12 @@ static class PluginLoader {
       RawLogAggregator.StartCapture();
       CollapseLogAggregator.StartCapture();
       SmartLogAggregator.StartCapture();
-    } else {
-      DebugEx.Info("Re-Attaching LogConsole to: {0}", rootObject);
     }
 
-    // Attach UI.
-    if (_currentGameObject != null) {
-      Object.DestroyImmediate(_currentGameObject.GetComponent<PersistentLogAggregatorFlusher>());
-      Object.DestroyImmediate(_currentGameObject.GetComponent<ConsoleUI>());
-    }
-    _currentGameObject = rootObject;
-    rootObject.AddComponent<PersistentLogAggregatorFlusher>();
-    rootObject.AddComponent<ConsoleUI>();
+    _currentGameObject = new GameObject("#LogConsole-controller");
+    Object.DontDestroyOnLoad(_currentGameObject);
+    _currentGameObject.AddComponent<PersistentLogAggregatorFlusher>();
+    _currentGameObject.AddComponent<ConsoleUI>();
   }
 
   /// <summary>Notifies all aggregators tha they need to update the filtering settings.</summary>
