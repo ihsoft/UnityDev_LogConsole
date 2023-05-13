@@ -9,3 +9,9 @@ different games different approaches may be needed. Check the branches for the s
 To install the plugin into the game, call `PluginLoader.Start` as soon as posible after the
 application start.
 
+## Common branch
+
+All common Unity functionality lives in `main` branch. For the game specific version, create or
+chekout the specific branch. Do NOT merge specific branches into `main`! Only commits from `main`
+to branch are allowed. The specific branches must only introduce the changes that are specific to
+the game.
