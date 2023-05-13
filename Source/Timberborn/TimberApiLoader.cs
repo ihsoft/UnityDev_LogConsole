@@ -5,8 +5,7 @@
 using Bindito.Core;
 using TimberApi.ConfiguratorSystem;
 using TimberApi.SceneSystem;
-using UnityDev.LogUtils;
-using UnityEngine;
+using UnityDev.Utils.LogUtils;
 
 // ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
