@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityDev.LogUtils;
+using UnityDev.Utils.LogUtils;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace

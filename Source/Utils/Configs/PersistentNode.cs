@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using UnityDev.LogUtils;
+using UnityDev.Utils.LogUtils;
 using UnityEngine;
 
 namespace UnityDev.Utils.Configs {

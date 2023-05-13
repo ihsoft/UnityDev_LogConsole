@@ -5,8 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
-// ReSharper disable once CheckNamespace
-namespace UnityDev.LogUtils {
+namespace UnityDev.Utils.LogUtils {
 
 /// <summary>Helper class to log a record which is bound to a specific object.</summary>
 /// <remarks>

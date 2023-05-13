@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using UnityDev.LogUtils;
+using UnityDev.Utils.LogUtils;
 
 namespace UnityDev.Utils.Configs {
 

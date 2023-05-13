@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using UnityDev.LogUtils;
+using UnityDev.Utils.LogUtils;
 using UnityEngine;
 
 namespace UnityDev.Utils.GUIUtils {
