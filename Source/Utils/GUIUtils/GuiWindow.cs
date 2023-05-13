@@ -4,7 +4,7 @@
 
 using System;
 using UnityDev.Utils.Extensions;
-using UnityDev.LogUtils;
+using UnityDev.Utils.LogUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

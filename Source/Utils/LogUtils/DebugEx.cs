@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace UnityDev.LogUtils {
+namespace UnityDev.Utils.LogUtils {
 
 /// <summary>An extended version of the logging capabilities in the game.</summary>
 /// <remarks>

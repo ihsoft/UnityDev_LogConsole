@@ -8,8 +8,7 @@ using System.Text;
 using UnityEngine;
 using UnityDev.ModelUtils;
 
-
-namespace UnityDev.LogUtils {
+namespace UnityDev.Utils.LogUtils {
 
 /// <summary>A set of tools to format various game entities for debugging purposes.</summary>
 public static class DbgFormatter {
