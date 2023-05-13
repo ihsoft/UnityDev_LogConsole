@@ -2,55 +2,47 @@
 // Author: igor.zavoychinskiy@gmail.com
 // This software is distributed under Public domain license.
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.IO;
-using UnityDev.Utils.Configs;
 using UnityDev.Utils.FSUtils;
 
-namespace UnityDev.LogUtils {
+namespace UnityDev.Utils.LogUtils {
 
 /// <summary>Logging settings.</summary>
 /// <remarks>
 /// The settings are not loaded pro-actively. The config is supposed to be loaded when it's first time needed.
 /// </remarks>
-[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-[SuppressMessage("ReSharper", "ConvertToConstant.Local")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class LoggingSettings {
 
-  #region Settings group
-  public class SettingsGroup : PersistentNode {
-    public int verbosityLevel = 0;
-  }
-
-  static void LoadSettings() {
-    _settings = new SettingsGroup();
-    // ReSharper disable once StringLiteralTypo
-    var configPath = ModPaths.MakeAbsPathForPlugin(typeof(LoggingSettings), "UnityDev_logsettings.cfg");
-    if (File.Exists(configPath)) {
-      //var config = ConfigNode.ParseFileAsNode(configPath);
-      var config = SimpleTextSerializer.LoadFromFile(configPath);
-      if (config != null) {
-        _settings.LoadFromConfigNode(config);
-        DebugEx.Fine("Loaded UnityDev settings. Logs verbosity: {0}", _settings.verbosityLevel);
-      }
-    }
-  }
-  #endregion
-
-  /// <summary>Settings group.</summary>
-  //public static SettingsGroup Settings => _settings ??= new SettingsGroup();
-  public static SettingsGroup Settings {
+  /// <summary>Level above 0 enables <see cref="DebugEx.Fine"/> logs.</summary>
+  public static int VerbosityLevel {
     get {
-      if (_settings == null) {
+      if (_verbosityLevel < 0) {
         LoadSettings();
       }
-      return _settings;
+      return _verbosityLevel;
     }
   }
-  static SettingsGroup _settings;
+  static int _verbosityLevel = -1;
 
-  /// <summary>Level above 0 enables <see cref="DebugEx.Fine"/> logs.</summary>
-  public static int VerbosityLevel => Settings.verbosityLevel;
+  static void LoadSettings() {
+    var configPath = ModPaths.MakeAbsPathForPlugin(typeof(LoggingSettings), "UnityDev_loglevel.txt");
+    if (File.Exists(configPath)) {
+      var lines = File.ReadAllLines(configPath);
+      if (lines.Length == 0) {
+        return;
+      }
+      var line = lines[0].Trim();
+      try {
+        var level = int.Parse(lines[0].Trim());
+        _verbosityLevel = level > 0 ? level : 0;
+        DebugEx.Fine("Loaded UnityDev settings. Logs verbosity: {0}", VerbosityLevel);
+      } catch (Exception) {
+        DebugEx.Error("Cannot parse verbosity level: {0}", line);
+      }
+    } else {
+      _verbosityLevel = 0;
+    }
+  }
 }
 }
