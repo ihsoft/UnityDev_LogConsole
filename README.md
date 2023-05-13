@@ -9,9 +9,8 @@ different games different approaches may be needed. Check the branches for the s
 To install the plugin into the game, call `PluginLoader.Start` as soon as posible after the
 application start.
 
-## Common branch
+## Timberborn branch
 
-All common Unity functionality lives in `main` branch. For the game specific version, create or
-chekout the specific branch. Do NOT merge specific branches into `main`! Only commits from `main`
-to branch are allowed. The specific branches must only introduce the changes that are specific to
-the game.
+This branch contains code to install the console into Timberborn game. Do not merge this branch
+into main! All non-game specific changes must be checked in to the `main`, and then merged back
+to this branch.
