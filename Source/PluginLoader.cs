@@ -6,6 +6,7 @@ using UnityDev.Utils.FSUtils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+// ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
 
 /// <summary>The plugin's bootstrap module.</summary>

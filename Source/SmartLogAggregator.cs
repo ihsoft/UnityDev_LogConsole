@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityDev.Utils.Configs;
 
+// ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
 
 /// <summary>A log capture that aggregates logs globally by the content.</summary>

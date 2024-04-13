@@ -10,6 +10,7 @@ using UnityDev.Utils.Configs;
 using UnityDev.Utils.GUIUtils;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
 
 /// <summary>A console to display Unity's debug logs in-game.</summary>
@@ -153,6 +154,7 @@ sealed class ConsoleUI : MonoBehaviour {
   #endregion
 
   #region Session persistence
+
   /// <summary>Only loads the session settings.</summary>
   void Awake() {
     _windowRect = new Rect(Margin, Margin, Screen.width - (Margin * 2), Screen.height - (Margin * 2));
@@ -163,7 +165,10 @@ sealed class ConsoleUI : MonoBehaviour {
   void OnDestroy() {
     SaveSettings();
   }
+
   #endregion
+
+  #region GUI chain
 
   /// <summary>Actually renders the console window.</summary>
   void OnGUI() {
@@ -442,6 +447,7 @@ sealed class ConsoleUI : MonoBehaviour {
   }
 
   #region GUI action handlers
+
   void GuiActionSetPaused(bool isPaused) {
     if (isPaused == _logUpdateIsPaused) {
       return;  // Prevent refreshing of the snapshot if the mode hasn't changed.
@@ -501,6 +507,7 @@ sealed class ConsoleUI : MonoBehaviour {
     GuiActionSetPaused(false);  // New mode invalidates the snapshot.
     _logsViewChanged = true;
   }
+
   #endregion
 }
 

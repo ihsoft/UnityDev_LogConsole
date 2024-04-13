@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using UnityDev.Utils.Configs;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
 
 /// <summary>A log capture that writes logs on disk.</summary>
