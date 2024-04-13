@@ -14,3 +14,6 @@ application start.
 This branch contains code to install the console into Timberborn game. Do not merge this branch
 into main! All non-game specific changes must be checked in to the `main`, and then merged back
 to this branch.
+
+NEVER PUSH CHANGES OT MAIN!!!
+It's OK to do "pull from main", but it's never OK to "push to main".
