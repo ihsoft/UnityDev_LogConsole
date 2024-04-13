@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
 
 /// <summary>A simple wrapper to hold static logs copy originated from any other aggregator.</summary>

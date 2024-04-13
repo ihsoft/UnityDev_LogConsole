@@ -10,6 +10,7 @@ using UnityDev.Utils.Configs;
 using UnityDev.Utils.GUIUtils;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
 
 /// <summary>A console to display Unity's debug logs in-game.</summary>
@@ -136,6 +137,9 @@ sealed class ConsoleUI : MonoBehaviour {
   /// <summary>Tells if the controls should be shown at the bottom of the dialog.</summary>
   bool _isToolbarAtTheBottom = true;
 
+  /// <summary>Tells if UI was resized since the mod instantiation.</summary>
+  bool _initialSizeSet;
+
   #region Quick filter fields
   /// <summary>Tells if the quick filter editing is active.</summary>
   /// <remarks>Log console update is frozen until the mode is ended.</remarks>
@@ -153,9 +157,9 @@ sealed class ConsoleUI : MonoBehaviour {
   #endregion
 
   #region Session persistence
+
   /// <summary>Only loads the session settings.</summary>
   void Awake() {
-    _windowRect = new Rect(Margin, Margin, Screen.width - (Margin * 2), Screen.height - (Margin * 2));
     LoadSettings();
   }
   
@@ -163,7 +167,10 @@ sealed class ConsoleUI : MonoBehaviour {
   void OnDestroy() {
     SaveSettings();
   }
+
   #endregion
+
+  #region GUI chain
 
   /// <summary>Actually renders the console window.</summary>
   void OnGUI() {
@@ -174,6 +181,13 @@ sealed class ConsoleUI : MonoBehaviour {
     if (!_isConsoleVisible) {
       return;
     }
+
+    // Init positioning.
+    if (!_initialSizeSet) {
+      _initialSizeSet = true;
+      ExpandToScreen();
+    }
+
     // Init skin styles.
     _logRecordStyle = new GUIStyle(GUI.skin.box) {
         alignment = TextAnchor.MiddleLeft,
@@ -303,6 +317,7 @@ sealed class ConsoleUI : MonoBehaviour {
   void GUICreateToolbar() {
     using (new GUILayout.HorizontalScope()) {
       // Window size/snap.
+<<<<<<< HEAD
         _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, Screen.height - Margin * 2);
       if (GUILayout.Button("Expand", MinSizeLayout)) {
       }
@@ -312,6 +327,16 @@ sealed class ConsoleUI : MonoBehaviour {
         var clientHeight = (Screen.height - 2.0f * Margin) / 3;
         _windowRect = new Rect(Margin, Screen.height - Margin - clientHeight, Screen.width - Margin * 2, clientHeight);
       if (GUILayout.Button("Down", MinSizeLayout)) {
+=======
+      if (GUILayout.Button("\u21d5", MinSizeLayout)) {
+        ExpandToScreen();
+      }
+      if (GUILayout.Button("\u21d1", MinSizeLayout)) {
+        SnapToTop();
+      }
+      if (GUILayout.Button("\u21d3", MinSizeLayout)) {
+        SnapToBottom();
+>>>>>>> main
       }
 
       // Quick filter.
@@ -441,7 +466,27 @@ sealed class ConsoleUI : MonoBehaviour {
     };
   }
 
+  #endregion
+
+  #region GUI snap methods
+
+  void SnapToTop() {
+    _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, (Screen.height - Margin * 2.0f) / 3);
+  }
+
+  void SnapToBottom() {
+    var clientHeight = (Screen.height - 2.0f * Margin) / 3;
+    _windowRect = new Rect(Margin, Screen.height - Margin - clientHeight, Screen.width - Margin * 2, clientHeight);
+  }
+
+  void ExpandToScreen() {
+    _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, Screen.height - Margin * 2);
+  }
+
+  #endregion
+
   #region GUI action handlers
+
   void GuiActionSetPaused(bool isPaused) {
     if (isPaused == _logUpdateIsPaused) {
       return;  // Prevent refreshing of the snapshot if the mode hasn't changed.
@@ -501,6 +546,7 @@ sealed class ConsoleUI : MonoBehaviour {
     GuiActionSetPaused(false);  // New mode invalidates the snapshot.
     _logsViewChanged = true;
   }
+
   #endregion
 }
 
