@@ -35,7 +35,7 @@
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="System" />
-        <Reference Include="Unity.InputSystem, Version=1.5.1.0, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="Unity.InputSystem, Version=1.7.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Unity\Unity.InputSystem.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
