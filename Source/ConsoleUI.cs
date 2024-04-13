@@ -303,15 +303,15 @@ sealed class ConsoleUI : MonoBehaviour {
   void GUICreateToolbar() {
     using (new GUILayout.HorizontalScope()) {
       // Window size/snap.
-      if (GUILayout.Button("\u21d5", MinSizeLayout)) {
         _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, Screen.height - Margin * 2);
+      if (GUILayout.Button("Expand", MinSizeLayout)) {
       }
-      if (GUILayout.Button("\u21d1", MinSizeLayout)) {
         _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, (Screen.height - Margin * 2.0f) / 3);
+      if (GUILayout.Button("Up", MinSizeLayout)) {
       }
-      if (GUILayout.Button("\u21d3", MinSizeLayout)) {
         var clientHeight = (Screen.height - 2.0f * Margin) / 3;
         _windowRect = new Rect(Margin, Screen.height - Margin - clientHeight, Screen.width - Margin * 2, clientHeight);
+      if (GUILayout.Button("Down", MinSizeLayout)) {
       }
 
       // Quick filter.
