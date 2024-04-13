@@ -137,6 +137,9 @@ sealed class ConsoleUI : MonoBehaviour {
   /// <summary>Tells if the controls should be shown at the bottom of the dialog.</summary>
   bool _isToolbarAtTheBottom = true;
 
+  /// <summary>Tells if UI was resized since the mod instantiation.</summary>
+  bool _initialSizeSet;
+
   #region Quick filter fields
   /// <summary>Tells if the quick filter editing is active.</summary>
   /// <remarks>Log console update is frozen until the mode is ended.</remarks>
@@ -157,7 +160,6 @@ sealed class ConsoleUI : MonoBehaviour {
 
   /// <summary>Only loads the session settings.</summary>
   void Awake() {
-    _windowRect = new Rect(Margin, Margin, Screen.width - (Margin * 2), Screen.height - (Margin * 2));
     LoadSettings();
   }
   
@@ -179,6 +181,13 @@ sealed class ConsoleUI : MonoBehaviour {
     if (!_isConsoleVisible) {
       return;
     }
+
+    // Init positioning.
+    if (!_initialSizeSet) {
+      _initialSizeSet = true;
+      ExpandToScreen();
+    }
+
     // Init skin styles.
     _logRecordStyle = new GUIStyle(GUI.skin.box) {
         alignment = TextAnchor.MiddleLeft,
@@ -309,14 +318,13 @@ sealed class ConsoleUI : MonoBehaviour {
     using (new GUILayout.HorizontalScope()) {
       // Window size/snap.
       if (GUILayout.Button("\u21d5", MinSizeLayout)) {
-        _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, Screen.height - Margin * 2);
+        ExpandToScreen();
       }
       if (GUILayout.Button("\u21d1", MinSizeLayout)) {
-        _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, (Screen.height - Margin * 2.0f) / 3);
+        SnapToTop();
       }
       if (GUILayout.Button("\u21d3", MinSizeLayout)) {
-        var clientHeight = (Screen.height - 2.0f * Margin) / 3;
-        _windowRect = new Rect(Margin, Screen.height - Margin - clientHeight, Screen.width - Margin * 2, clientHeight);
+        SnapToBottom();
       }
 
       // Quick filter.
@@ -445,6 +453,25 @@ sealed class ConsoleUI : MonoBehaviour {
         _ => PluginLoader.RawLogAggregator
     };
   }
+
+  #endregion
+
+  #region GUI snap methods
+
+  void SnapToTop() {
+    _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, (Screen.height - Margin * 2.0f) / 3);
+  }
+
+  void SnapToBottom() {
+    var clientHeight = (Screen.height - 2.0f * Margin) / 3;
+    _windowRect = new Rect(Margin, Screen.height - Margin - clientHeight, Screen.width - Margin * 2, clientHeight);
+  }
+
+  void ExpandToScreen() {
+    _windowRect = new Rect(Margin, Margin, Screen.width - Margin * 2, Screen.height - Margin * 2);
+  }
+
+  #endregion
 
   #region GUI action handlers
 
