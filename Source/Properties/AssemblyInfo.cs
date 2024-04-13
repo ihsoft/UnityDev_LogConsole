@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("KSP2Dev LogConsole")]
-[assembly: AssemblyDescription("COnvinient lgoconsle for KSP2")]
+[assembly: AssemblyTitle("UnityDev LogConsole")]
+[assembly: AssemblyDescription("Convinient in-game logconsle for Unity")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("IHSoft")]
-[assembly: AssemblyProduct("KSP2Dev_LogConsole")]
+[assembly: AssemblyProduct("UnityDev_LogConsole")]
 [assembly: AssemblyCopyright("Public domain")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -30,6 +30,4 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.*")]
