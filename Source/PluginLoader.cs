@@ -29,7 +29,7 @@ static class PluginLoader {
   #endregion
 
   public static void Start() {
-    if (_isLoadedAndAttached && _currentGameObject != null) {
+    if (_isLoadedAndAttached && _currentGameObject) {
       return;  // No need to re-attach.
     }
 
