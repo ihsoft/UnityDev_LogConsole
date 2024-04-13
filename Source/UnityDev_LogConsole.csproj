@@ -41,16 +41,16 @@
           <HintPath>..\Dependencies\Timberborn\Bindito.Core.dll</HintPath>
         </Reference>
         <Reference Include="System" />
-        <Reference Include="TimberApi, Version=0.5.4.2, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="TimberApi, Version=0.6.5.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Timberborn\TimberApi.dll</HintPath>
         </Reference>
-        <Reference Include="TimberApi.Common, Version=0.5.4.2, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="TimberApi.Common, Version=0.6.5.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Timberborn\TimberApi.Common.dll</HintPath>
         </Reference>
-        <Reference Include="TimberApi.Core, Version=0.5.4.2, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="TimberApi.Core, Version=0.6.5.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Timberborn\TimberApi.Core.dll</HintPath>
         </Reference>
-        <Reference Include="Unity.InputSystem, Version=1.5.1.0, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="Unity.InputSystem, Version=1.7.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Unity\Unity.InputSystem.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
