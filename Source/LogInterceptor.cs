@@ -257,7 +257,7 @@ public static class LogInterceptor {
   /// idea.
   /// </param>
   /// <param name="frames">
-  /// The related stack frames fro the stack trace. It can be <c>null</c> if the method has failed to capture the proper
+  /// The related stack frames for the stack trace. It can be <c>null</c> if the method has failed to capture the proper
   /// stack trace.
   /// </param>
   /// <returns>A string that identifies a meaningful piece of code that triggered the log.</returns>
@@ -301,7 +301,7 @@ public static class LogInterceptor {
       if (prefixFound) {
         continue;  // There is a prefix match, re-try all the filters.
       }
-      
+
       // No overrides.
       break;
     }
