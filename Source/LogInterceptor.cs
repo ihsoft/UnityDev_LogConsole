@@ -7,9 +7,12 @@ using StackFrame = System.Diagnostics.StackFrame;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using UnityDev.Utils.Configs;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 // ReSharper disable once CheckNamespace
 namespace UnityDev.LogConsole {
@@ -52,6 +55,24 @@ public static class LogInterceptor {
       Settings.LoadFromConfigNode(node);
     }
   }
+  #endregion
+
+  #region Helper Unity object to periodically flush losg from the other therads
+
+  sealed class ThreadLogsUpdater : MonoBehaviour {
+    void Awake() {
+      Application.logMessageReceivedThreaded += HandleThreadLog;
+    }
+
+    void OnDestroy() {
+      Application.logMessageReceivedThreaded -= HandleThreadLog;
+    }
+
+    void Update() {
+      FlushThreadLogs();
+    }
+  }
+
   #endregion
 
   /// <summary>A basic container for the incoming logs. Immutable.</summary>
@@ -106,8 +127,9 @@ public static class LogInterceptor {
     }
     Debug.LogWarning("Debug output intercepted by Unity LogConsole.");
     IsStarted = true;
-    
+
     Application.logMessageReceived += HandleLog;
+    PluginLoader.MainGameObject.AddComponent<ThreadLogsUpdater>();
   }
 
   /// <summary>Removes log interceptor and allows logs flowing into the system.</summary>
@@ -117,6 +139,7 @@ public static class LogInterceptor {
     }
     Debug.LogWarning("Debug output returns back to the system. Use system's console to see the logs");
     Application.logMessageReceived -= HandleLog;
+    Object.DestroyImmediate(PluginLoader.MainGameObject.GetComponent<ThreadLogsUpdater>());
     IsStarted = false;
   }
   
@@ -133,19 +156,20 @@ public static class LogInterceptor {
     PreviewCallbacks.Remove(previewCallback);
   }
 
-  /// <summary>Records a log from the log callback.</summary>
+  /// <summary>Creates a log records out of the log callback arguments.</summary>
   /// <param name="message">The message to log.</param>
   /// <param name="exceptionStackTrace">The exception stack trace provided by the Unity core.</param>
   /// <param name="type">The type of message (error, exception, warning, assert).</param>
-  static void HandleLog(string message, string exceptionStackTrace, LogType type) {
+  /// <param name="skipFrames">Number of frames to skip to get the entry point (Unity callback).</param>
+  static Log MakeLogRecord(string message, string exceptionStackTrace, LogType type, int skipFrames) {
     // Detect source and stack trace for logs other than exceptions. Exceptions are logged from
     // the Unity engine, and the provided stack trace should be used. 
     var stackTrace = exceptionStackTrace;
     StackFrame[] frames = null;
     var source = type != LogType.Exception
-        ? GetSourceAndStackTrace(out stackTrace, out frames)
+        ? GetSourceAndStackTrace(skipFrames + 1, out stackTrace, out frames)
         : GetSourceAndReshapeStackTrace(ref stackTrace);
-    var log = new Log(_lastLogId++) {
+    return new Log(Interlocked.Increment(ref _lastLogId)) {
         Timestamp = DateTime.Now,
         Message = message,
         StackTrace = stackTrace,
@@ -153,8 +177,12 @@ public static class LogInterceptor {
         Source = source,
         Type = type,
     };
+  }
 
-    // Notify preview handlers. Do an exception check and exclude preview callbacks that cause errors.
+  /// <summary>Delivers log to the preview handlers.</summary>
+  /// <remarks>If a handler throws an error it's get removed and won't get other updates.</remarks>
+  /// <param name="log"></param>
+  static void SendToPreviewHandlers(Log log) {
     foreach (var callback in PreviewCallbacks) {
       try {
         callback(log);
@@ -168,6 +196,44 @@ public static class LogInterceptor {
       BadCallbacks.Clear();
     }
   }
+
+  /// <summary>Records a log from the log callback.</summary>
+  /// <param name="message">The message to log.</param>
+  /// <param name="exceptionStackTrace">The exception stack trace provided by the Unity core.</param>
+  /// <param name="type">The type of message (error, exception, warning, assert).</param>
+  static void HandleLog(string message, string exceptionStackTrace, LogType type) {
+    SendToPreviewHandlers(MakeLogRecord(message, exceptionStackTrace, type, 1));
+  }
+
+  /// <summary>Records a log from non-main Unity thread.</summary>
+  /// <remarks>
+  /// This method is thread safe. It doesn't immediately send logs to the pipeline. Instead, it only collects them.
+  /// <see cref="FlushThreadLogs"/> is responsible for delivering logs to the preview handlers.
+  /// </remarks>
+  /// <param name="message">The message to log.</param>
+  /// <param name="exceptionStackTrace">The exception stack trace provided by the Unity core.</param>
+  /// <param name="type">The type of message (error, exception, warning, assert).</param>
+  static void HandleThreadLog(string message, string exceptionStackTrace, LogType type) {
+    var threadedMessage = "[Thread:#" + Thread.CurrentThread.ManagedThreadId + "] " + message;
+    _threadLogRecords.Enqueue(MakeLogRecord(threadedMessage, exceptionStackTrace, type, 1));
+  }
+
+  /// <summary>Sends the accumulated logs from teh threads to the main pipeline.</summary>
+  /// <remarks>
+  /// This method must only be called from the main Unity thread. It's OK better to call it frequently to not let the
+  /// logs to pile up.
+  /// </remarks>
+  static void FlushThreadLogs() {
+    if (_threadLogRecords.IsEmpty) {
+      return;
+    }
+    var threadLogs = Interlocked.Exchange(ref _threadLogRecords, new ConcurrentQueue<Log>());
+    foreach (var log in threadLogs) {
+      SendToPreviewHandlers(log);
+    }
+  }
+
+  static ConcurrentQueue<Log> _threadLogRecords = new();
 
   /// <summary>Calculates log source and the related stack trace.</summary>
   /// <remarks>
@@ -183,20 +249,23 @@ public static class LogInterceptor {
   /// This method assumes it's two levels down in the calling stack from the last Unity's method
   /// (which is <c>UnityEngine.Application.CallLogCallback</c> for now).
   /// </p>
+  /// <param name="skipFrames">
+  /// Number of frames to skip in teh stack to reach the log system entry point (the Unity callback).
+  /// </param>
   /// <param name="stackTrace">
   /// The string representation of the applicable stack strace. The format is undetermined, so parsing it would be a bad
   /// idea.
   /// </param>
   /// <param name="frames">
-  /// The related stack frames fro the stack trace. It can be <c>null</c> if the method has failed to capture the proper
+  /// The related stack frames for the stack trace. It can be <c>null</c> if the method has failed to capture the proper
   /// stack trace.
   /// </param>
   /// <returns>A string that identifies a meaningful piece of code that triggered the log.</returns>
-  static string GetSourceAndStackTrace(out string stackTrace, out StackFrame[] frames) {
+  static string GetSourceAndStackTrace(int skipFrames, out string stackTrace, out StackFrame[] frames) {
     StackTrace st;
     string source;
 
-    var skipFrames = 2;  // +1 for calling from HandleLogs(), +1 for Unity last method.
+    skipFrames++;  // +1 to get the last Unity method.
     while (true) {
       st = new StackTrace(skipFrames, true);
       if (st.FrameCount == 0) {
@@ -232,7 +301,7 @@ public static class LogInterceptor {
       if (prefixFound) {
         continue;  // There is a prefix match, re-try all the filters.
       }
-      
+
       // No overrides.
       break;
     }
