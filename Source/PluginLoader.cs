@@ -21,6 +21,7 @@ static class PluginLoader {
   internal static string SessionFileName => ModPaths.MakeAbsPathForPlugin(typeof(PluginLoader), "session.cfg");
   internal static string SettingsFileName => ModPaths.MakeAbsPathForPlugin(typeof(PluginLoader), "settings.cfg");
   internal static string PluginRootFolder => ModPaths.MakeAbsPathForPlugin(typeof(PluginLoader));
+  internal static GameObject MainGameObject => _currentGameObject;
 
   #region Log aggregators
   static readonly PersistentLogAggregator DiskLogAggregator = new();
@@ -33,30 +34,25 @@ static class PluginLoader {
     if (_isLoadedAndAttached && _currentGameObject) {
       return;  // No need to re-attach.
     }
-
-    // Start all aggregators and begin intercepting if not yet done.
-    if (!_isLoadedAndAttached) {
-      _isLoadedAndAttached = true;
-
-      LogInterceptor.LoadSettings();
-      LogFilter.LoadSettings();
-
-      DiskLogAggregator.LoadSettings();
-      RawLogAggregator.LoadSettings();
-      CollapseLogAggregator.LoadSettings();
-      SmartLogAggregator.LoadSettings();
-
-      LogInterceptor.StartIntercepting();
-      DiskLogAggregator.StartCapture();
-      RawLogAggregator.StartCapture();
-      CollapseLogAggregator.StartCapture();
-      SmartLogAggregator.StartCapture();
-    }
+    _isLoadedAndAttached = true;
 
     _currentGameObject = new GameObject("#LogConsole-controller");
     Object.DontDestroyOnLoad(_currentGameObject);
     _currentGameObject.AddComponent<PersistentLogAggregatorFlusher>();
     _currentGameObject.AddComponent<ConsoleUI>();
+
+    LogInterceptor.LoadSettings();
+    LogFilter.LoadSettings();
+    DiskLogAggregator.LoadSettings();
+    RawLogAggregator.LoadSettings();
+    CollapseLogAggregator.LoadSettings();
+    SmartLogAggregator.LoadSettings();
+
+    LogInterceptor.StartIntercepting();
+    DiskLogAggregator.StartCapture();
+    RawLogAggregator.StartCapture();
+    CollapseLogAggregator.StartCapture();
+    SmartLogAggregator.StartCapture();
   }
 
   /// <summary>Notifies all aggregators tha they need to update the filtering settings.</summary>
