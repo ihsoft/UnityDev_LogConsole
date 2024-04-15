@@ -79,26 +79,23 @@ public static class LogInterceptor {
   /// <summary>A basic container for the incoming logs. Immutable.</summary>
   public class Log {
     public readonly int Id;
-    public DateTime Timestamp;
-    public string Message;
+    public readonly DateTime Timestamp;
+    public readonly string Message;
     public string StackTrace;
-    public StackFrame[] StackFrames;
-    public string Source;
-    public LogType Type;
+    public readonly StackFrame[] StackFrames;
+    public readonly string Source;
+    public readonly LogType Type;
     public bool FilenamesResolved;
-    
-    internal Log(int id) {
-      this.Id = id;
-    }
 
-    internal Log(Log srcLog) {
-      Id = srcLog.Id;
-      Timestamp = srcLog.Timestamp;
-      Message = srcLog.Message;
-      StackTrace = srcLog.StackTrace;
-      StackFrames = srcLog.StackFrames;
-      Source = srcLog.Source;
-      Type = srcLog.Type;
+    internal Log(int id, DateTime timestamp, string message, string stackTrace, StackFrame[] stackFrames, string source,
+                 LogType type) {
+      Id = id;
+      Timestamp = timestamp;
+      Message = message;
+      StackTrace = stackTrace;
+      StackFrames = stackFrames;
+      Source = source;
+      Type = type != LogType.Assert ? type : LogType.Log;  // We don't treat asserts in a distinguished way.
     }
   }
 
@@ -174,14 +171,8 @@ public static class LogInterceptor {
     var source = type != LogType.Exception
         ? GetSourceAndStackTrace(skipFrames + 1, out stackTrace, out frames)
         : GetSourceAndReshapeStackTrace(ref stackTrace);
-    return new Log(Interlocked.Increment(ref _lastLogId)) {
-        Timestamp = DateTime.Now,
-        Message = message,
-        StackTrace = stackTrace,
-        StackFrames = frames,
-        Source = source,
-        Type = type,
-    };
+    return new Log(
+        Interlocked.Increment(ref _lastLogId), DateTime.Now, message, stackTrace, frames, source, type);
   }
 
   /// <summary>Delivers log to the preview handlers.</summary>
