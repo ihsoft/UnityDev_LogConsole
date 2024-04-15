@@ -1,10 +1,6 @@
 # Overview
 
-Hit `RightCtrl` in-game to open the console. Hit it again to hide. The logs, captured during the
-play session, will be available under `<game root>/UnityDev_logs` folder. The files are grouped by
-the log severity: INFO, WARNING, ERROR, EXCEPTION. The content of the log folder is automatically
-maintained to not overflow the system. The default setting is to keep at most 30 log files, but it
-can be changed via `CleanupPolicy` in the `settings.cfg` file.
+Checkout `package/README.md`.
 
 # UnityDev: LogConsole
 
@@ -23,5 +19,5 @@ This branch contains code to install the console into Timberborn game. Do not me
 into main! All non-game specific changes must be checked in to the `main`, and then merged back
 to this branch.
 
-NEVER PUSH CHANGES OT MAIN!!!
+NEVER PUSH CHANGES TO MAIN!!!
 It's OK to do "pull from main", but it's never OK to "push to main".
