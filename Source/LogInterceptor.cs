@@ -78,13 +78,34 @@ public static class LogInterceptor {
 
   /// <summary>A basic container for the incoming logs. Immutable.</summary>
   public class Log {
+    /// <summary>Unique log record ID.</summary>
+    /// <remarks>It's a bad candidate to ordering the records. Consider it's a random value.</remarks>
     public readonly int Id;
+
+    /// <summary>The time when this record has been captured.</summary>
+    /// <remarks>The record may not appear in the preview handlers right away.</remarks>
     public readonly DateTime Timestamp;
+
+    /// <summary>Full message of the log record.</summary>
     public readonly string Message;
+
+    /// <summary>The stack trace dump.</summary>
     public string StackTrace;
+
+    /// <summary>The stack frames, started from the first non- Unity or UnityDev method.</summary>
+    /// <remarks>The number of items must match the number of liens in <see cref="StackTrace"/>.</remarks>
     public readonly StackFrame[] StackFrames;
+
+    /// <summary>
+    /// The string to be presented as the log "source". It's usually a full name of the top most method on the stack. 
+    /// </summary>
     public readonly string Source;
+
+    /// <summary>Severity of the log.</summary>
     public readonly LogType Type;
+
+    /// <summary>Tells if the file names for the stack frames were resolved.</summary>
+    /// <remarks>When the names are resolved, the <see cref="StackTrace"/> is updated accordingly.</remarks>
     public bool FilenamesResolved;
 
     internal Log(int id, DateTime timestamp, string message, string stackTrace, StackFrame[] stackFrames, string source,
