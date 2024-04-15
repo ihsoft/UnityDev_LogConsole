@@ -8,6 +8,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityDev.Utils.FSUtils;
 
 // ReSharper disable once CheckNamespace
@@ -131,20 +133,28 @@ public class LogRecord {
     if (SrcLog.FilenamesResolved) {
       return;  // Nothing to do.
     }
-    var lines = SrcLog.StackTrace.Split('\n');
+    var lines = SrcLog.StackTrace.Split('\n').Select(x => x.TrimEnd()).ToArray();
     if (SrcLog.StackFrames == null || lines.Length != SrcLog.StackFrames.Length) {
-      SrcLog.FilenamesResolved = true;  // Cannot resolve.
       return;
     }
     var gameRoot = Path.GetFullPath(new Uri(ModPaths.ApplicationRootPath).LocalPath);
     var matches = new List<string>();
     for (var i = 0; i < lines.Length; i++) {
+      var line = lines[i];
       var assembly = SrcLog.StackFrames[i].GetMethod().DeclaringType?.Assembly;
-      var relativePath = new Uri(gameRoot)
-          .MakeRelativeUri(new Uri(assembly?.Location ?? ""))
-          .ToString()
-          .Replace(Path.DirectorySeparatorChar, '/');
-      matches.Add($"{lines[i]} in {relativePath} [v{assembly?.GetName().Version}]");
+      if (assembly == null) {
+        matches.Add(line);
+        continue;
+      }
+      line = Regex.Replace(line, @"\s+in .*$", "");
+      if (assembly.Location == "") {
+        matches.Add($"{line} in {assembly}");
+      } else {
+        var relativePath = new Uri(gameRoot)
+            .MakeRelativeUri(new Uri(assembly?.Location ?? "")).ToString()
+            .Replace(Path.DirectorySeparatorChar, '/');
+        matches.Add($"{line} in {relativePath} [v{assembly?.GetName().Version}]");
+      }
     }
     SrcLog.StackTrace = string.Join("\n", matches.ToArray());
     SrcLog.FilenamesResolved = true;
