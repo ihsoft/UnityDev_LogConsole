@@ -62,6 +62,7 @@ public static class LogInterceptor {
   sealed class ThreadLogsUpdater : MonoBehaviour {
     void Awake() {
       Application.logMessageReceivedThreaded += HandleThreadLog;
+      _unityThreadId = Thread.CurrentThread.ManagedThreadId;
     }
 
     void OnDestroy() {
@@ -78,26 +79,23 @@ public static class LogInterceptor {
   /// <summary>A basic container for the incoming logs. Immutable.</summary>
   public class Log {
     public readonly int Id;
-    public DateTime Timestamp;
-    public string Message;
+    public readonly DateTime Timestamp;
+    public readonly string Message;
     public string StackTrace;
-    public StackFrame[] StackFrames;
-    public string Source;
-    public LogType Type;
+    public readonly StackFrame[] StackFrames;
+    public readonly string Source;
+    public readonly LogType Type;
     public bool FilenamesResolved;
-    
-    internal Log(int id) {
-      this.Id = id;
-    }
 
-    internal Log(Log srcLog) {
-      Id = srcLog.Id;
-      Timestamp = srcLog.Timestamp;
-      Message = srcLog.Message;
-      StackTrace = srcLog.StackTrace;
-      StackFrames = srcLog.StackFrames;
-      Source = srcLog.Source;
-      Type = srcLog.Type;
+    internal Log(int id, DateTime timestamp, string message, string stackTrace, StackFrame[] stackFrames, string source,
+                 LogType type) {
+      Id = id;
+      Timestamp = timestamp;
+      Message = message;
+      StackTrace = stackTrace;
+      StackFrames = stackFrames;
+      Source = source;
+      Type = type != LogType.Assert ? type : LogType.Log;  // We don't treat asserts in a distinguished way.
     }
   }
 
@@ -119,6 +117,10 @@ public static class LogInterceptor {
 
   /// <summary>Unique identifier of the log record.</summary>
   static int _lastLogId = 1;
+
+  /// <summary>The main Unity thread Id.</summary>
+  /// <remarks>It's important to know it to correctly distinguish the log sources.</remarks>
+  static int _unityThreadId = -1;
 
   /// <summary>Installs interceptor callback and disables system debug log.</summary>
   public static void StartIntercepting() {
@@ -169,14 +171,8 @@ public static class LogInterceptor {
     var source = type != LogType.Exception
         ? GetSourceAndStackTrace(skipFrames + 1, out stackTrace, out frames)
         : GetSourceAndReshapeStackTrace(ref stackTrace);
-    return new Log(Interlocked.Increment(ref _lastLogId)) {
-        Timestamp = DateTime.Now,
-        Message = message,
-        StackTrace = stackTrace,
-        StackFrames = frames,
-        Source = source,
-        Type = type,
-    };
+    return new Log(
+        Interlocked.Increment(ref _lastLogId), DateTime.Now, message, stackTrace, frames, source, type);
   }
 
   /// <summary>Delivers log to the preview handlers.</summary>
@@ -214,6 +210,9 @@ public static class LogInterceptor {
   /// <param name="exceptionStackTrace">The exception stack trace provided by the Unity core.</param>
   /// <param name="type">The type of message (error, exception, warning, assert).</param>
   static void HandleThreadLog(string message, string exceptionStackTrace, LogType type) {
+    if (_unityThreadId == -1 || _unityThreadId == Thread.CurrentThread.ManagedThreadId) {
+      return;  // Only listen for the non-Unity threads.
+    }
     var threadedMessage = "[Thread:#" + Thread.CurrentThread.ManagedThreadId + "] " + message;
     _threadLogRecords.Enqueue(MakeLogRecord(threadedMessage, exceptionStackTrace, type, 1));
   }

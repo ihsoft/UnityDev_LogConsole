@@ -202,11 +202,6 @@ abstract class BaseLogAggregator {
     if (CheckIsFiltered(log)) {
       return;
     }
-    // Override unsupported log types into INFO.
-    if (log.Type != LogType.Log && log.Type != LogType.Warning
-        && log.Type != LogType.Error && log.Type != LogType.Exception) {
-      log.Type = LogType.Log;
-    }
     _rawLogsBuffer.Add(log);
     if (_rawLogsBuffer.Count >= Settings.rawBufferSize) {
       FlushBufferedLogs();
