@@ -4,17 +4,22 @@
 
 using System;
 using System.IO;
+using Timberborn.ModManagerScene;
 
 namespace UnityDev.Utils.FSUtils {
 
 /// <summary>A helper class to deal with plugins file structure.</summary>
 public static class ModPaths {
+  /// <summary>Should be set by the mod entry point.</summary>
+  internal static IModEnvironment ModEnvironment;
+
   /// <summary>Returns full path to the game's root folder.</summary>
-  public static string ApplicationRootPath => _applicationRootPath ??= BepInEx.Paths.GameRootPath;
+  public static string ApplicationRootPath =>
+      _applicationRootPath ??= MakeAbsPathForPlugin(ModEnvironment.GetType(), "../..");
   static string _applicationRootPath;
 
   /// <summary>Returns full path to the plugins root folder.</summary>
-  public static string PluginsRootPath => _pluginsRootPath ??= BepInEx.Paths.PluginPath;
+  public static string PluginsRootPath => _pluginsRootPath ??= ModEnvironment.ModPath;
   static string _pluginsRootPath;
 
   /// <summary>Makes full absolute path from the provided relative path in the type's DLL location folder.</summary>

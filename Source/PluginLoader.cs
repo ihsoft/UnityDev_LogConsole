@@ -2,6 +2,7 @@
 // Author: igor.zavoychinskiy@gmail.com
 // This software is distributed under Public Domain license.
 
+using System.IO;
 using UnityDev.Utils.FSUtils;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -18,9 +19,9 @@ static class PluginLoader {
   static bool _isLoadedAndAttached;
   static GameObject _currentGameObject;
 
-  internal static string SessionFileName => ModPaths.MakeAbsPathForPlugin(typeof(PluginLoader), "session.cfg");
-  internal static string SettingsFileName => ModPaths.MakeAbsPathForPlugin(typeof(PluginLoader), "settings.cfg");
-  internal static string PluginRootFolder => ModPaths.MakeAbsPathForPlugin(typeof(PluginLoader));
+  internal static string SessionFileName => Path.Combine(ModPaths.PluginsRootPath, "session.cfg");
+  internal static string SettingsFileName => Path.Combine(ModPaths.PluginsRootPath, "settings.cfg");
+  internal static string PluginRootFolder => ModPaths.PluginsRootPath;
   internal static GameObject MainGameObject => _currentGameObject;
 
   #region Log aggregators

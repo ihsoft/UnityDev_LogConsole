@@ -1,0 +1,57 @@
+[h1]Overview[/h1]
+This mod allows you to use game logs in a much more convenient way than the stock game offers (a plain text file).
+
+[b]NOTE:[/b] This mod is primarily useful for mod authors.
+
+[h1]Features[/h1]
+[list]
+[*] Full-screen in-game window that you can bring up by hitting a hotkey.
+[*] Logs from non-Unity threads that are not normally captured by the Unity logger.
+[*] Stack trace for any log record, allowing you to figure out the source module.
+[*] Displays the package and method from which the log record originates.
+[*] Advanced system for log filtering: by severity or logging source.
+[*] Ability to silence logs you don't want, e.g., repetitive and non-useful entries.
+[*] Log records have timestamps, which help in the retrospective analysis of events.
+[*] Logs are saved into timestamped files for even better retrospective analysis.
+[/list]
+
+[h1]Configuration file[/h1]
+The behavior of almost anything can be changed via the configuration file, located at the mod's path in the file "settings.cfg".
+
+[h1]Hotkey[/h1]
+The in-game console opens by pressing the "right control" key. To close it, hit the same key again. This can be changed in the "UI" section in the settings. The toggle key name is the name from Unity's "UnityEngine.KeyCode" enum.
+
+[h1]Different view modes[/h1]
+Depending on the number of logs and the speed at which the log is being updated, different modes can be useful.
+[list]
+[*] "Raw" is the simplest mode, which shows all records as a plain list.
+[*] "Collapsed" is a more advanced mode that collapses several identical records that appear sequentially. It will only show one row with the latest timestamp and the total count.
+[*] "Smart" is a variant of "Collapsed", but it collapses identical rows over a larger window (1000 records by default). It's useful when there are many periodic records.
+[/list]
+By default, each view shows up to 300 recent log records. Log aggregation for the "Collapsed" and "Smart" modes is performed over the log buffer, which is sized to 1000 records. This can be changed in the "PlainLogAggregator," "CollapseLogAggregator," and "SmartLogAggregator" sections in the settings.
+
+[h1]Content filtering[/h1]
+The in-game console allows you to choose which types of logs to present: INFO, WARNING, ERROR, and EXCEPTION. However, the last one may not be very useful as Timberborn crashes in the case of any exception. Additionally, a quick filter on the source can be applied via "quick filter." For example, if your mods are within the same namespace, you can type a common part and only see log records from your mods.
+
+[h1]Persistent logs location[/h1]
+The saved logs are located in the game's root folder at the "UnityDev_logs" path. By default, during each session, three files are created:
+[list]
+[*] "UnityDev-LOG.yyMMddTHHmmss.INFO.txt" for all log records of any severity.
+[*] "UnityDev-LOG.yyMMddTHHmmss.WARNING.txt" for WARNING severity and higher.
+[*] "UnityDev-LOG.yyMMddTHHmmss.ERROR.txt" for errors only.
+[/list]
+See the section "PersistentLog" in the settings to set up which files should be created and what location/name format should be used.
+
+There is a cleanup policy that prevents this folder from being overrun with old logs. It can be changed. See the section "PersistentLog.CleanupPolicy" in the settings. By default, the following policy is applied:
+[list]
+[*] A maximum of 30 files.
+[*] The total size of all files is less than 100 MB.
+[*] Maximum file age is less than 7 days.
+[/list]
+Older files will be deleted to conform to the policy.
+
+[h1]Silencing unnecessary sources[/h1]
+In case a method throws a lot of spam records, it can be blocked so that the records won't show up in the console or the files, but such records [i]will[/i] appear in the game's log. This can be done via the UI from the log console using the "silence by: source" or "silence by: prefix" controls. Silence by source will block records from the exact method. Silence by prefix allows silencing an entire class or even a namespace. To remove silences, edit the section "LogFilter" in the settings.
+
+[h1]Skip methods in stack trace[/h1]
+It's not uncommon to wrap logging code into wrappers, e.g., "MyMod.DoLog". In this case, logs from different places in the code will be marked by the same source, which is not useful. To work around this, such sources can be added to the skip list, and the console will pick the next source after the ignored one instead. This is defined in the section "LogInterceptor" in the settings.

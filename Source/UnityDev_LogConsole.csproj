@@ -34,21 +34,12 @@
         <DocumentationFile>bin\Release\UnityDev_LogConsole.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="BepInEx, Version=5.4.21.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\Dependencies\Timberborn\BepInEx.dll</HintPath>
-        </Reference>
         <Reference Include="Bindito.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Timberborn\Bindito.Core.dll</HintPath>
         </Reference>
         <Reference Include="System" />
-        <Reference Include="TimberApi, Version=0.6.5.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\Dependencies\Timberborn\TimberApi.dll</HintPath>
-        </Reference>
-        <Reference Include="TimberApi.Common, Version=0.6.5.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\Dependencies\Timberborn\TimberApi.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="TimberApi.Core, Version=0.6.5.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\Dependencies\Timberborn\TimberApi.Core.dll</HintPath>
+        <Reference Include="Timberborn.ModManagerScene, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Dependencies\Timberborn\Timberborn.ModManagerScene.dll</HintPath>
         </Reference>
         <Reference Include="Unity.InputSystem, Version=1.7.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\Dependencies\Unity\Unity.InputSystem.dll</HintPath>
@@ -82,8 +73,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="SmartLogAggregator.cs" />
         <Compile Include="SnapshotLogAggreator.cs" />
-        <Compile Include="Timberborn\BepInExLoader.cs" />
-        <Compile Include="Timberborn\TimberApiLoader.cs" />
+        <Compile Include="Timberborn\ModStarter.cs" />
         <Compile Include="Utils\Configs\ConfigNode.cs" />
         <Compile Include="Utils\Configs\PersistentNode.cs" />
         <Compile Include="Utils\Configs\SimpleTextSerializer.cs" />
@@ -106,7 +96,7 @@
     </Target>
     -->
     <Target Name="AfterBuild">
-        <Exec Command="xcopy /i /Y $(TargetPath) u:\BepInEx\plugins\UnityDev_LogConsole" />
+        <Exec Command="xcopy /i /Y $(TargetPath) &quot;u:\Mods\LogConsole&quot;" />
     </Target>
 
 </Project>

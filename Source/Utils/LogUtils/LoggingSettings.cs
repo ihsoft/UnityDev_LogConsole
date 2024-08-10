@@ -26,7 +26,7 @@ public static class LoggingSettings {
   static int _verbosityLevel = -1;
 
   static void LoadSettings() {
-    var configPath = ModPaths.MakeAbsPathForPlugin(typeof(LoggingSettings), "UnityDev_loglevel.txt");
+    var configPath = Path.Combine(ModPaths.PluginsRootPath, "UnityDev_loglevel.txt");
     if (File.Exists(configPath)) {
       var lines = File.ReadAllLines(configPath);
       if (lines.Length == 0) {

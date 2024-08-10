@@ -1,0 +1,9 @@
+{
+  "Name": "LogConsole",
+  "Version": "1.2.0",
+  "Id": "Timberborn.IgorZ.LogConsole",
+  "MinimumGameVersion": "0.6.4.0",
+  "Description": "A better log console which also persists files between the game starts.",
+  "RequiredMods": [
+  ]
+}
